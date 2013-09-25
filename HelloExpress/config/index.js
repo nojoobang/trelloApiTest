@@ -12,6 +12,6 @@ module.exports = function(req, res){
 	this.secret = "a8f1568bdffd24490dcb688d0410402fe01cd12cb366ff6d928e4aa790bc710f";
 		//token = "588f337cb358e08704d6e0bce503021959d7cda897decc5c6f4e777433e4ddf7",
 	this.oauth = new OAuth(this.requestURL, this.accessURL, this.myKey, this.secret, "1.0", this.loginCallback, "HMAC-SHA1");
-	
+
 	this.appName = "KnowReDev";
 };
