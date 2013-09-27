@@ -12,7 +12,6 @@ var _ = module.exports.prototype;
 
 _.start = function(callback) {
 	this.startCallback = callback;
-//	this._initHTTPApp();
 	this._initHTTPApp();
 };
 
