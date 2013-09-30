@@ -41,17 +41,32 @@ _._cb = function(req, res) {
 		token = query.oauth_token,
 		tokenSecret = this.oauth_secrets[token],
 		verifier = query.oauth_verifier,
-		borads = null,
 		that = this;
 
 
 	this.trelloData = new TrelloData(this.oauth);
 
 	this.oauth.getOAuthAccessToken(token, tokenSecret, verifier, function(error, accessToken, accessTokenSecret, results) {
-		boards = that.trelloData.getCardData(accessToken, accessTokenSecret);
-		//console.log(boards);
+		that.trelloData.getCardData(accessToken, accessTokenSecret);
+		
 		res.end();
 	});
+};
+
+_._basic = function(req, res) {
+	var TrelloData = require('../trelloData'),
+		express = require('express'),
+		app = express();
+		
+	app.engine('.html', require('ejs').__express);
+	app.set('views', __dirname + '/views');
+	app.set('view engine', 'html');
+	
+	this.trelloData = new TrelloData(this.oauth);
+
+	this.trelloData.getCardData();
+
+	res.render('index.html');
 };
 
 _.start = function() {
@@ -64,7 +79,7 @@ _.start = function() {
 		} else if (/^\/cb/.test(req.url)) {
 			return that._cb(req, res);
 		} else {
-			return res.end("Don't know about that");
+			return that._basic(req, res);
 		}
 	}).listen(this.port, this.domain);
 

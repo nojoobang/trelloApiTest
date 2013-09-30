@@ -3,6 +3,7 @@
 module.exports = function(oauth) {
 	this.oauth = oauth;
 	this.boards = [];
+	this.data = null;
 	// this.boardData = [];
 	// this.cardData = [];
 
@@ -55,26 +56,47 @@ _._makeBoardList = function() {
 };
 
 _.getCardData = function(accessToken, accessTokenSecret) {
-	var that = this,
-		accessToken = accessToken,
-		accessTokenSecret = accessTokenSecret;
+	// var that = this,
+	// 	accessToken = accessToken,
+	// 	accessTokenSecret = accessTokenSecret;
 
-	for (var i = 0; i < this.boards.length; i++){
-		this._makeCardData(i, accessToken, accessTokenSecret);
+	for (var i = 0; i < 1; i++){
+		//console.log(this._makeCardData(i, accessToken, accessTokenSecret));
+		//this.boards[i]['cards'] = this._makeCardData(i, accessToken, accessTokenSecret);
+		this._getData(i);
 	}
-	return this.boards;
 };
 
-_._makeCardData = function(i, accessToken, accessTokenSecret) {
-	var that = this,
-		host = 'https://api.trello.com',
-		param = 'fields=idBoard,idList,idMembers,name,url',
-		num = i;
+// _._makeCardData = function(i, accessToken, accessTokenSecret) {
+// 	var that = this,
+// 		host = 'https://api.trello.com',
+// 		param = 'fields=idBoard,idList,idMembers,name,url',
+// 		num = i,
+// 		boards;
 
-	this.oauth.getProtectedResource( host + "/1/boards/"+ this.boards[num].id + '/cards?' + param, "GET", accessToken, accessTokenSecret, function(error, data, response) {
-		//console.log(that.boards[num]);
-		that.boards[num]["cards"] = data;
+// 	this.oauth.getProtectedResource( host + "/1/boards/"+ this.boards[num].id + '/cards?' + param, "GET", accessToken, accessTokenSecret, function(error, data, response) {
+// 		console.log(data);
+// 		return data
+// 	});
+// };
+
+_._getData = function(index) {
+	var Trello = require("node-trello"),
+		t = new Trello("bc2746ad21a253b505fa27438f1fa256", "588f337cb358e08704d6e0bce503021959d7cda897decc5c6f4e777433e4ddf7"),
+		that = this,
+		Data;
+
+	t.get("/1/boards/"+ this.boards[index].id +"/cards?fields=idBoard,idList,idMembers,name,url", { name: "name"}, function(err, data) {
+	  if (err) throw err;
+	  //console.log(that.data);
+	  that.data = data;
+	  //console.log(that.data);
+	  //console.log(data);
+	  console.log(that.data);
 	});
+
+	//console.log(that.data);
+
 };
 
 
