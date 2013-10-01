@@ -100,7 +100,7 @@
 		_._makeTd = function() {
 			var that = this;
 
-			for (var i = 0; i < 1; i++) {
+			for (var i = 0; i < this.boards.length; i++) {
 				this.trello.boards.get("5215d0a6f110af2843001769", function(boards) {
 					console.log(boards);
 				});		
