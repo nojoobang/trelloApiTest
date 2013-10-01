@@ -6,6 +6,7 @@
 		<!--script type="text/javascript" src="../public/javascripts/index.js"></script-->
 	</head>
 	<body>
+		<button id="auth">auth</button>
 		<table id="issueTracker">
 			<thead>
 				<th>Issue Name</th>
@@ -35,8 +36,16 @@
 		var _ = TrelloTable.prototype;
 
 		_._initialize = function() {
+			this._bindEvent();
 			this._makeBoardList();
-			this._authorizing();
+		};
+
+		_._bindEvent = function() {
+			var that = this;
+
+			$('#auth').click(function(){
+				that._authorizing();
+			});
 		};
 
 		_._makeBoardList = function() {
@@ -83,7 +92,7 @@
 			var that = this;
 
 			this.trello.authorize({
-			    interactive: false,
+				type: "popup",
 			    success: that._makeTd()
 			});
 		};
