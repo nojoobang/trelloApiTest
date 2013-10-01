@@ -8,11 +8,10 @@ exports.index = function() {
 
 	app.set('port', process.env.PORT || 3000);
 	app.set('views', __dirname + '/views');
-	app.set('public', __dirname + '/public');
 	app.engine('html', require('ejs').renderFile);
 
 	app.use(app.router);
-	app.use(express.static(path.join(__dirname, 'public')));
+	app.use('/static', express.static(path.join(__dirname, '/public')));
 	
 	app.get('/', routes.index);
 	app.get('/users', user.list);

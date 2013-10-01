@@ -1,8 +1,38 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+* {
+	margin: 0;
+	padding: 0;
 }
 
-a {
-  color: #00B7FF;
+#issueTracker {
+	border-collapse: collapse;
+	border-spacing: 0px 0px;
+
+	width: 90%;
+
+	margin: 0 auto;
+}
+
+#issueTracker thead tr {
+
+}
+
+#issueTracker thead tr th {
+	background-color: rgb(150, 150, 150);
+
+	border-right: 1px solid white;
+
+	color: white;
+	font-size: 20px;
+}
+
+#issueTracker thead tr th:last-child {
+	border-right: none;
+}
+
+#issueTracker tbody tr {
+
+}
+
+#issueTracker tbody tr td {
+
 }
