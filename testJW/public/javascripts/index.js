@@ -2,7 +2,6 @@ var TrelloTable = function() {
 	this.trello = Trello;
 
 	this.boards = null;
-	this.cards = [];
 	this.idList = [];
 
 	this._initialize();	
@@ -13,18 +12,36 @@ var _ = TrelloTable.prototype;
 _._initialize = function() {
 	this._bindEvent();
 	this._makeBoardList();
-	this._authorizing();
+	this.trello.authorize({
+		type: "redirect",
+		name: "KnowReDev",
+		interactive: false,
+		scope: { read: true, write: true, account: true },
+		success: this._makeCards()
+	});
 };
 
 _._bindEvent = function() {
 	var that = this;
 
 	$('#auth').click(function(){
-		that._authorizing();
+		that.trello.authorize({
+			type: "redirect",
+			name: "KnowReDev",
+			interactive: false,
+			scope: { read: true, write: true, account: true },
+			success: that._makeCards()
+		});
 	});
 
 	$('#create').click(function(){
-		that._makeCards();
+		that._makeStatus();
+		that._makeMember();
+		that._makeLabel();
+	});
+
+	$('#makeTd').click(function(){
+		that._makeTd();
 	});
 };
 
@@ -67,66 +84,94 @@ _._makeBoardList = function() {
 	}];
 };
 
-
-_._authorizing = function() {
-	var that = this;
-
-	this.trello.authorize({
-		type: "popup"
-	});
-};
-
 _._makeCards = function() {
 	var that = this;
 
 	for (var i = 0; i < this.boards.length; i++) {	
 		this._getCardData(i, "boards", this.boards[i].id);
 	}
-	console.log(this.cards);
 };
 
 _._makeStatus = function() {
-	for (var j = 0; j < this.cards.length; j++ ) {
-		this._getStatusData(j, "list", this.cards[j].idList);
+	for (var j = 0; j < this.boards.length; j++ ) {
+		for (var k = 0; k < this.boards[j].cards.length; k++ ){
+			this._getStatusData(j, k, "list", this.boards[j].cards[k].idList);
+		}
 	}
-	console.log(this.idList);
+	console.log(this.boards);	
+};
+
+_._makeMember = function() {
+	for (var i = 0; i < this.boards.length; i++ ) {
+		for (var j = 0; j < this.boards[i].cards.length; j++ ){
+			this.boards[i].cards[j]['memberContact'] = "";
+			for (var k = 0; k < this.boards[i].cards[j].idMembers.length; k++) {
+				this._getMemberData(i, j, k, "members", this.boards[i].cards[j].idMembers[k]);
+			}
+		}
+	}
+};
+
+_._makeLabel = function() {
+	for (var i = 0; i < this.boards.length; i++ ) {
+		for (var j = 0; j < this.boards[i].cards.length; j++ ){
+			this.boards[i].cards[j]['labelNames'] = "";
+			for (var k = 0; k < this.boards[i].cards[j].labels.length; k++) {
+				this.boards[i].cards[j]['labelNames'] += this.boards[i].cards[j].labels[k].color + " ";
+			}
+		}
+	}
 };
 
 _._makeTd = function() {
 	var that = this;
 	$('tbody').empty();
 
-	
-	for (var k = 0; k < this.cards.length; k++) {
-		var str = "<tr>" + 
-				  "<td class='issueName'>"+ this.cards[k].name +"</td>" +
-				  "<td class='date'>mm/dd/yy</td>" +
-				  "<td class='source'>KnowRe</td>" +
-				  "<td class='contact'></td>" +
-				  "<td class='type'></td>" +
-				  "<td class='team'>"+  +"</td>" +
-				  "<td class='trelloLink'>"+  +"</td>" +
-				  "<td class='status'>"+ this.idList[k] +"</td>" +
-				  "</tr>";
-		$('tbody').append(str);
+	for(var i = 0; i < this.boards.length; i++) {
+		for (var j = 0; j < this.boards[i].cards.length; j++) {
+			//this._getStatusData(i, j, "list", this.boards[i].cards[j].idList);
+			var type = ( this.boards[i].cards[j].name.match(/\[\w*\]/) ) ? this.boards[i].cards[j].name.match(/\[\w*\]/) : "??"
+			var source = (this.boards[i].name == "customerFeedback") ? "Feedback" : "KnowRe";
+			var str = "<tr>" + 
+					  "<td class='boradName'>"+ this.boards[i].name +"</td>" +
+					  "<td class='status'>"+ this.boards[i].cards[j].status +"</td>" +
+					  "<td class='issueName'>"+ this.boards[i].cards[j].name +"</td>" +
+					  "<td class='date'>"+ this.boards[i].cards[j].dateLastActivity.match(/[\d]{4}\-[\d]{1,2}\-[\d]{1,2}/) +"</td>" +
+					  "<td class='source'>"+ source +"</td>" +
+					  "<td class='contact'>"+this.boards[i].cards[j].memberContact+"</td>" +
+					  "<td class='type'>"+ type +"</td>" +
+					  "<td class='trelloLink'>"+ this.boards[i].cards[j].shortUrl +"</td>" +
+					  "<td class='labels " + this.boards[i].cards[j].labelNames + "'>"+ this.boards[i].cards[j].labelNames +"</td>" +
+					  "</tr>";
+			$('tbody').append(str);
+		}
 	}
+
 
 };
 
 _._getCardData = function(index, path, param) {
 	var that = this;
-	this.trello.get(path +"/"+ param +"/"+ "cards?attachment_fildes=date&fields=idBoard,idList,idMembers,name,url", function(data) {
-		that.cards.push(data);	
+
+	this.trello.get(path +"/"+ param +"/"+ "cards?", function(data) {
+		that.boards[index]['cards'] = data;
 	});	
 };
 
-_._getStatusData = function(index, path, param) {
+_._getStatusData = function(bIdx, cIdx, path, param) {
 	var that = this;
 
-	this.trello.get(path +"/"+ param +"/"+ "name?", function(data) {
-		that.idList.push(data);
+	this.trello.get(path +"/"+ param +"/", function(data) {
+		that.boards[bIdx].cards[cIdx]['status'] = data.name;
 	});	
-	
+};
+
+_._getMemberData = function(bIdx, cIdx, mIdx, path, param) {
+	var that = this;
+
+	this.trello.get(path +"/"+ param +"/", function(data) {
+		that.boards[bIdx].cards[cIdx]['memberContact'] += "'" + data.fullName + "'&nbsp;";	
+	});	
 };
 
 var t = new TrelloTable();

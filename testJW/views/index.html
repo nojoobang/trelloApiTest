@@ -4,20 +4,23 @@
 		<link rel="stylesheet" href="/static/stylesheets/style.css" />
 		<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
 		<script src="https://api.trello.com/1/client.js?key=bc2746ad21a253b505fa27438f1fa256"></script>
+		<script type="text/javascript" src="http://www.kunalbabre.com/projects/table2CSV.js" ></script> 
 	</head>
 	<body>
 		<button id="auth">auth</button>
 		<button id="create">create</button>
+		<button id="makeTd">makeTd</button>
 		<table id="issueTracker">
 			<thead>
+				<th>Borad Name</th>
+				<th>Status</th>
 				<th>Issue Name</th>
-				<th>Date</th>
+				<th>Last Activity</th>
 				<th>Source</th>
 				<th>Contact</th>
 				<th>Type</th>
-				<th>Team</th>
 				<th>Trello Link</th>
-				<th>Status</th>
+				<th>Labels</th>
 			</thead>
 			<tbody>
 				
@@ -25,4 +28,7 @@
 		</table>
 	</body>
 	<script type="text/javascript" src="/static/javascripts/index.js"></script>
+	<script type="text/javascript">
+
+	</script>
 </html>
