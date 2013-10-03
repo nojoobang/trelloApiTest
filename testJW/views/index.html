@@ -4,12 +4,16 @@
 		<link rel="stylesheet" href="/static/stylesheets/style.css" />
 		<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
 		<script src="https://api.trello.com/1/client.js?key=bc2746ad21a253b505fa27438f1fa256"></script>
-		<script type="text/javascript" src="http://www.kunalbabre.com/projects/table2CSV.js" ></script> 
+		<script type="text/javascript" src="/static/javascripts/jquery.tabletojson.js" ></script> 
 	</head>
 	<body>
 		<button id="auth">auth</button>
 		<button id="create">create</button>
 		<button id="makeTd">makeTd</button>
+		<button id="deauth">deAuth</button>
+		<button id="csvDown">csvDown</button><br />
+		<input id="quote" type="checkbox" checked="true" /><label for="quote">Wrap values in double quotes</label><br />
+    	<input id="labels" type="checkbox" checked="true" /><lable for="labels">Include labels in first row</lable>
 		<table id="issueTracker">
 			<thead>
 				<th>Borad Name</th>
